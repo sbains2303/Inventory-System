@@ -3,6 +3,7 @@ import shortuuid
 import customtkinter
 import inventory
 import products
+import insights
 
 prod = []
 sup = []
@@ -40,7 +41,6 @@ class loginWindow:
 
 
     def new_window(self):
-        # self.master.destroy()
         self.master.withdraw()
         self.master = customtkinter.CTk()
         self.app = MainPage(self.master)
@@ -73,7 +73,8 @@ class MainPage:
         self.salButton = customtkinter.CTkButton(self.master,text="Sales", border_width=1,height=40, width=140, font=('Helvetica', 17), command=nextW)
         self.salButton.place(x=30, y=220)
 
-        self.custButton = customtkinter.CTkButton(self.master,text="Customers", border_width=1,height=40, width=100,font=('Helvetica', 17), command=nextW)
+        self.custButton = customtkinter.CTkButton(self.master,text="Insights", border_width=1,height=40, width=100,font=('Helvetica', 17), command=lambda: self.new_window(
+            insights.insights_window))
         self.custButton.place(x=30, y=260)
 
     def new_window(self, _class):

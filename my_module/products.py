@@ -1,17 +1,16 @@
 from tkinter.ttk import Treeview
 import customtkinter
 from my_module.connection import sql_query
-from my_module.main import id_gen, ck_name
-from supplier import find_Sup
-
+import my_module
+import supplier
 
 def create_prod():
-    id = id_gen('p')
+    id = my_module.main.id_gen('p')
     name = str(input("Enter product name: "))
-    ck_name(name)
+    my_module.main.ck_name(name)
     price = float(input("Enter the unit price: "))
     sName = str("Enter supplier name: ")
-    supID = find_Sup(sName)
+    supID = supplier.find_Sup(sName)
 
     create_prod_query = """INSERT INTO Products(ProductID, Name, UnitPrice, SupplierID) VALUES (%s,%s,%d,%s)"""
     sql_query(create_prod_query, [id,name,price,supID])
@@ -116,13 +115,13 @@ class products_window:
         self.price = customtkinter.CTkEntry(self.new)
         self.price.place(x=150, y=100)
 
-        self.newid = id_gen('p')
+        self.newid = my_module.main.id_gen('p')
         self.suppliers = sql_query('SELECT Name FROM Supplier',[])
 
         self.optionl = customtkinter.CTkLabel(self.new, text="Supplier")
         self.optionl.place(x=60, y=140)
 
-        self.option = customtkinter.CTkOptionMenu(self.new, values=['Larry','X'])
+        self.option = customtkinter.CTkOptionMenu(self.new, values=self.suppliers)
         self.option.place(x=150, y =140)
 
         self.addb = customtkinter.CTkButton(self.new, text="Add product", command = lambda: addProduct())
@@ -136,7 +135,6 @@ class products_window:
             variables.append(self.newid)
             variables.append(self.name.get())
             variables.append(int(self.price.get()))
-            # variables.append(result_list)
             placeholders = ', '.join(['%s'] * len(result_list))
             query =f"INSERT INTO Products VALUES (%s,%s,%s,{placeholders})"
             parameters = variables + result_list

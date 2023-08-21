@@ -11,3 +11,4 @@ def find_Sup(s):
         nID = main.id_gen(s)
         return nID
     else: return rows[0]
+

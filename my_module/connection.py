@@ -11,7 +11,7 @@ def py_conn(choice,id):
         password='root',
         database="inventory",
     )
-    pycursor = connection.cursor()
+    # pycursor = connection.cursor()
     name = sql_query('SELECT Name FROM Products WHERE ProductID=%s', id)
     if (choice == 0):
         df = pd.read_sql_query(sql='SELECT Date,Sale WHERE ProductID=%(id)s',params={'id':name},con=connection)

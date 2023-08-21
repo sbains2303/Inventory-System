@@ -85,10 +85,11 @@ class SmartInventoryManagementSystem:
         forecasted_demand = self.demand_forecasting(sales_df)
 
 
-def start_ai():
+def start_ai(id):
+    print(id)
     # Example usage of the SmartInventoryManagementSystem class
-    sales_data = py_conn(0,) # Replace with actual sales data file name
-    stock_data = py_conn(1,)  # Replace with actual stock data file name
+    sales_data = py_conn(0,id) # Replace with actual sales data file name
+    stock_data = py_conn(1,id)  # Replace with actual stock data file name
 
     inventory_management_system = SmartInventoryManagementSystem(sales_data, stock_data)
     inventory_management_system.optimize_inventory()
