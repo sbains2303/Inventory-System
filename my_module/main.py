@@ -1,13 +1,13 @@
 import tkinter as tk
 import shortuuid
 import customtkinter
-import inventory
-import products
-import insights
+import inventory, products, insights, sales, purchases
+from my_module import supplier
 
 prod = []
 sup = []
 cust = []
+ord = []
 
 
 def nextW():
@@ -64,13 +64,16 @@ class MainPage:
             products.products_window))
         self.prodButton.place(x=30, y=100)
 
-        self.suppButton = customtkinter.CTkButton(self.master,text="Suppliers", border_width=1, height=40, width=220,font=('Helvetica', 17), command=nextW)
+        self.suppButton = customtkinter.CTkButton(self.master,text="Suppliers", border_width=1, height=40, width=220,font=('Helvetica', 17), command=lambda: self.new_window(
+            supplier.supplier_window))
         self.suppButton.place(x=30, y=140)
 
-        self.purchButton = customtkinter.CTkButton(self.master,text="Purchases", border_width=1,height=40, width=180,font=('Helvetica', 17), command=nextW)
+        self.purchButton = customtkinter.CTkButton(self.master,text="Purchases", border_width=1,height=40, width=180,font=('Helvetica', 17), command=lambda: self.new_window(
+            purchases.purchases_window))
         self.purchButton.place(x=30, y=180)
 
-        self.salButton = customtkinter.CTkButton(self.master,text="Sales", border_width=1,height=40, width=140, font=('Helvetica', 17), command=nextW)
+        self.salButton = customtkinter.CTkButton(self.master,text="Sales", border_width=1,height=40, width=140, font=('Helvetica', 17), command=lambda: self.new_window(
+            sales.sales_window))
         self.salButton.place(x=30, y=220)
 
         self.custButton = customtkinter.CTkButton(self.master,text="Insights", border_width=1,height=40, width=100,font=('Helvetica', 17), command=lambda: self.new_window(
@@ -103,6 +106,10 @@ def id_gen(t):
         while (newId in cust):
             newId = t + shortuuid.ShortUUID().random(length=9)
         cust.append(newId)
+    if t == 'o':
+        while (newId in ord):
+            newId = t + shortuuid.ShortUUID().random(length=9)
+        ord.append(newId)
     return newId
 
 

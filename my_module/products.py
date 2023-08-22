@@ -31,7 +31,7 @@ class products_window:
         self.trv["columns"] = ("1", "2", "3", "4")
         self.trv['show'] = 'headings'
 
-        self.trv.column("1", width=110, anchor='c')
+        self.trv.column("1", width=130, anchor='c')
         self.trv.column("2", width=110, anchor='c')
         self.trv.column("3", width=110, anchor='c')
         self.trv.column("4", width=110, anchor='c')
