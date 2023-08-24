@@ -11,9 +11,9 @@ class purchases_window:
         self.master = master
         self.master.geometry("780x400")
         self.master.title("Purchases")
-        self.label = customtkinter.CTkLabel(self.master, text="Purchases", font=('Helvetica', 20, 'bold'))
-        self.label.place(x=340, y=5)
+        customtkinter.CTkLabel(self.master, text="Purchases", font=('Helvetica', 20, 'bold')).place(x=340, y=5)
 
+        # Treeview widget to display information from purchases table
         self.trv = Treeview(self.master, selectmode='browse')
         self.trv.grid(row=1, column=1, padx=50, pady=80)
         self.trv.configure(height=20)
@@ -34,40 +34,35 @@ class purchases_window:
         self.trv.heading("5", text="Purchase")
         self.fill_table()
 
-        self.upl = customtkinter.CTkLabel(self.master, text="Add a purchase: ", text_color="white",
-                                          font=('Helvetica',14,'bold'))
-        self.upl.place(x=440, y=50)
+        # Create labels, entry fields, and a button for adding a purchase
+        customtkinter.CTkLabel(self.master, text="Add a purchase: ", text_color="white",
+                                          font=('Helvetica',14,'bold')).place(x=440, y=50)
 
-        self.dl = customtkinter.CTkLabel(self.master, text="Date (e.g. 1992-02-10):")
-        self.dl.place(x=460, y=80)
+        customtkinter.CTkLabel(self.master, text="Date (e.g. 1992-02-10):").place(x=460, y=80)
         self.dlbutton = customtkinter.CTkEntry(self.master)
         self.dlbutton.place(x=610, y=80)
 
-        self.suppl = customtkinter.CTkLabel(self.master, text="Supplier Name: ")
-        self.suppl.place(x=460, y=120)
+        customtkinter.CTkLabel(self.master, text="Supplier Name: ").place(x=460, y=120)
         suppliers = sql_query('Select Name FROM Supplier',[])
         self.suppo = customtkinter.CTkOptionMenu(self.master, values=suppliers, command=None)
         self.suppo.place(x=610, y=120)
 
-        self.prl = customtkinter.CTkLabel(self.master, text="Product Name: ")
-        self.prl.place(x=460, y=160)
+        customtkinter.CTkLabel(self.master, text="Product Name: ").place(x=460, y=160)
         products = sql_query('SELECT NAME FROM Products', [])
         self.suppo = customtkinter.CTkOptionMenu(self.master, values=products, command=None)
         self.suppo.place(x=610, y=160)
 
-        self.lpurch = customtkinter.CTkLabel(self.master, text="Purchase: ")
-        self.lpurch.place(x=460, y=200)
+        customtkinter.CTkLabel(self.master, text="Purchase: ").place(x=460, y=200)
         self.epurch = customtkinter.CTkEntry(self.master)
         self.epurch.place(x=610, y=200)
 
         self.addb = customtkinter.CTkButton(self.master, text="Add purchase", width=200, command=lambda : self.addPurchase())
         self.addb.place(x=440, y=240)
 
-        self.ldel = customtkinter.CTkLabel(self.master, text="Delete a purchase: ", font=('Helvetica', 14, 'bold'))
-        self.ldel.place(x=440, y=280)
+        # Create labels, entry fields, and a button for deleting a purchase from the table
+        customtkinter.CTkLabel(self.master, text="Delete a purchase: ", font=('Helvetica', 14, 'bold')).place(x=440, y=280)
 
-        self.idl = customtkinter.CTkLabel(self.master, text="Order ID:")
-        self.idl.place(x=460, y=320)
+        customtkinter.CTkLabel(self.master, text="Order ID:").place(x=460, y=320)
 
         self.iden = customtkinter.CTkEntry(self.master)
         self.iden.place(x=610, y=320)
@@ -75,6 +70,7 @@ class purchases_window:
         self.butdel = customtkinter.CTkButton(self.master, text="Delete purchase", width =200)
         self.butdel.place(x=440, y=360)
 
+    # Method to update table in GUI with new records added to Purchases table
     def fill_table(self):
         for item in self.trv.get_children():
             self.trv.delete(item)
@@ -84,6 +80,7 @@ class purchases_window:
             self.trv.insert("", 'end', iid=row[0], text=row[0],
                             values=(row[0], row[1], row[2], row[3], row[4]))
 
+    # Method to add purchase to table in MySQL
     def addPurchase(self):
         supplier = sql_query('SELECT SupplierID FROM Supplier WHERE Name=%s',[self.suppo.get()])
         supplier_list = [row[0] for row in supplier]

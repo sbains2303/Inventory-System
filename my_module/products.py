@@ -1,5 +1,7 @@
 from tkinter.ttk import Treeview
 import customtkinter
+
+from my_module import main
 from my_module.connection import sql_query
 import my_module
 import supplier
@@ -7,7 +9,7 @@ import supplier
 def create_prod():
     id = my_module.main.id_gen('p')
     name = str(input("Enter product name: "))
-    my_module.main.ck_name(name)
+    my_module.main.check_name(name)
     price = float(input("Enter the unit price: "))
     sName = str("Enter supplier name: ")
     supID = supplier.find_Sup(sName)
@@ -97,7 +99,7 @@ class products_window:
 
     def newProductWindow(self):
         self.new = customtkinter.CTk()
-        self.new.geometry("400x300")
+        self.new.geometry("400x350")
         self.new.title("Product addition")
 
         self.labeln = customtkinter.CTkLabel(self.new, text="Fill product details:", font=('Helvetica', 14, 'bold'))
@@ -121,11 +123,24 @@ class products_window:
         self.optionl = customtkinter.CTkLabel(self.new, text="Supplier")
         self.optionl.place(x=60, y=140)
 
+
         self.option = customtkinter.CTkOptionMenu(self.new, values=self.suppliers)
         self.option.place(x=150, y =140)
 
-        self.addb = customtkinter.CTkButton(self.new, text="Add product", command = lambda: addProduct())
-        self.addb.place(x=190, y = 230)
+        self.addb = customtkinter.CTkButton(self.new, text="Add product", command=lambda: addProduct())
+        self.addb.place(x=60, y=180)
+
+        self.sup = customtkinter.CTkLabel(self.new, text="Add with new supplier:", font=('Helvetica', 14, 'bold'))
+        self.sup.place(x=40, y=230)
+
+        self.optiont = customtkinter.CTkLabel(self.new, text="New supplier")
+        self.optiont.place(x=60, y=270)
+
+        self.opt = customtkinter.CTkEntry(self.new)
+        self.opt.place(x=150, y =270)
+
+        self.nsup = customtkinter.CTkButton(self.new, text="Add supplier and product")
+        self.nsup.place(x=60, y=310)
 
 
         def addProduct():
@@ -139,6 +154,18 @@ class products_window:
             query =f"INSERT INTO Products VALUES (%s,%s,%s,{placeholders})"
             parameters = variables + result_list
             sql_query(query,parameters)
+            self.fill_table()
+
+        def addSup():
+            product = sql_query('SELECT ProductID FROM Products WHERE Name=%s', [self.suppo.get()])
+            product_list = [row[0] for row in product]
+            variables = []
+            variables.append(main.id_gen('s'))
+            variables.append(self.dlbutton.get())
+            placeholder = ', '.join(['%s'] * len(product_list))
+            query = f"INSERT INTO Supplier VALUES (%s,%s,{placeholder})"
+            parameters = variables + product_list
+            sql_query(query, parameters)
             self.fill_table()
 
         self.new.mainloop()

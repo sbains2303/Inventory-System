@@ -2,7 +2,7 @@ import customtkinter
 from ai import start_ai
 from my_module.connection import sql_query
 
-class insights_window:
+class InsightsWindow:
 
     def __init__(self, master):
         self.master = master

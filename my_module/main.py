@@ -1,44 +1,36 @@
 import tkinter as tk
-import shortuuid
+
 import customtkinter
-import inventory, products, insights, sales, purchases
+import shortuuid
+
+import insights
+import inventory
+import products
+import purchases
+import sales
 from my_module import supplier
 
-prod = []
-sup = []
-cust = []
-ord = []
+
+# Initialize lists to store IDs for different entities
+prod, sup, cust, ords = [], [], [], []
 
 
-def nextW():
-    pass
-
-
-class loginWindow:
+# WelcomeWindow class for the initial window
+class WelcomeWindow:
     def __init__(self, master):
-
         self.master = master
-        self.container = tk.Frame(self.master)
-        self.master.geometry("300x280")
-        self.master.title('Login')
+        self.master.geometry("500x300")
+        self.master.title('Welcome')
         self.master.configure(bg="#DBDBDB")
 
-        self.labelUsr = customtkinter.CTkLabel(self.master, text="Log in", font=('Helvetica',20,'bold'))
-        self.labelUsr.place(x=30, y=20)
+        tk.Frame(self.master)
 
-        self.labelUsr = customtkinter.CTkLabel(self.master, text="Username: ")
-        self.labelUsr.place(x=50, y=60)
-        username_entry = customtkinter.CTkEntry(self.master)
-        username_entry.place(x=50, y=90)
-
-        self.labelPass = customtkinter.CTkLabel(self.master, text="Password: ")
-        self.labelPass.place(x=50, y=120)
-        password_entry = customtkinter.CTkEntry(self.master)
-        password_entry.place(x=50, y=150)
-
-        self.login_button = customtkinter.CTkButton(self.master,text="Log in", fg_color="#006400", command = self.new_window)
-        self.login_button.place(x=130, y=230)
-
+        customtkinter.CTkLabel(self.master, text="Inventory Management System",
+                               font=('Helvetica', 30, 'bold')).place(x=25, y=40)
+        customtkinter.CTkLabel(self.master, text="Click below to continue to the main menu", text_color="#006400",
+                               font=('Helvetica', 18, 'bold')).place(x=80, y=150)
+        customtkinter.CTkButton(self.master, text="Continue",
+                                fg_color="#006400", command=self.new_window).place(x=175, y=200)
 
     def new_window(self):
         self.master.withdraw()
@@ -47,38 +39,41 @@ class loginWindow:
         self.master.mainloop()
 
 
+# MainPage class for the main menu
 class MainPage:
     def __init__(self, master):
         self.master = master
         self.master.geometry("400x320")
         self.master.title("Main Menu")
 
-        self.label = customtkinter.CTkLabel(self.master,text="Inventory Management System", font=('Helvetica',20,'bold') )
-        self.label.place(x=60,y=20)
+        customtkinter.CTkLabel(self.master, text="Inventory Management System",
+                               font=('Helvetica', 20, 'bold')).place(x=60, y=20)
 
-        self.invButton = customtkinter.CTkButton(self.master, text="Inventory", height=40, border_width=1, width=300, font=('Helvetica', 17), command=lambda: self.new_window(
-            inventory.inventory_window))
-        self.invButton.place(x=30, y=60)
+        button_params = [
+            ("Inventory", 300, 60, inventory.InventoryWindow),
+            ("Products", 260, 100, products.products_window),
+            ("Suppliers", 220, 140, supplier.SupplierWindow),
+            ("Purchases", 180, 180, purchases.purchases_window),
+            ("Sales", 140, 220, sales.SalesWindow),
+            ("Insights", 100, 260, insights.InsightsWindow)
+        ]
 
-        self.prodButton = customtkinter.CTkButton(self.master, text="Products", height=40, width=260, border_width=1, font=('Helvetica', 17), command=lambda: self.new_window(
-            products.products_window))
-        self.prodButton.place(x=30, y=100)
+        customtkinter.CTkLabel(
+            self.master,
+            text="Inventory Management System",
+            font=('Helvetica', 20, 'bold')
+        ).place(x=60, y=20)
 
-        self.suppButton = customtkinter.CTkButton(self.master,text="Suppliers", border_width=1, height=40, width=220,font=('Helvetica', 17), command=lambda: self.new_window(
-            supplier.supplier_window))
-        self.suppButton.place(x=30, y=140)
-
-        self.purchButton = customtkinter.CTkButton(self.master,text="Purchases", border_width=1,height=40, width=180,font=('Helvetica', 17), command=lambda: self.new_window(
-            purchases.purchases_window))
-        self.purchButton.place(x=30, y=180)
-
-        self.salButton = customtkinter.CTkButton(self.master,text="Sales", border_width=1,height=40, width=140, font=('Helvetica', 17), command=lambda: self.new_window(
-            sales.sales_window))
-        self.salButton.place(x=30, y=220)
-
-        self.custButton = customtkinter.CTkButton(self.master,text="Insights", border_width=1,height=40, width=100,font=('Helvetica', 17), command=lambda: self.new_window(
-            insights.insights_window))
-        self.custButton.place(x=30, y=260)
+        for text, width, y, command in button_params:
+            customtkinter.CTkButton(
+                self.master,
+                text=text,
+                border_width=1,
+                height=40,
+                width=width,
+                font=('Helvetica', 17),
+                command=lambda cmd=command: self.new_window(cmd)
+            ).place(x=30, y=y)
 
     def new_window(self, _class):
         self.new = customtkinter.CTk()
@@ -86,39 +81,43 @@ class MainPage:
         self.new.mainloop()
 
 
-def ck_name(n):
-    nName = n
-    while len(nName) > 20:
-        nName = input("Name must be less than 20 characters. Please enter again: ")
+# Function to check and limit the length of a name
+def check_name(n):
+    n_name = n
+    while len(n_name) > 20:
+        n_name = input("Name must be less than 20 characters. Please enter again: ")
 
 
+# Function to generate a unique ID based on a type
 def id_gen(t):
-    newId = t + shortuuid.ShortUUID().random(length=9)
+    new_id = t + shortuuid.ShortUUID().random(length=9)
     if t == 's':
-        while (newId in sup):
-            newId = t + shortuuid.ShortUUID().random(length=9)
-        sup.append(newId)
+        while new_id in sup:
+            new_id = t + shortuuid.ShortUUID().random(length=9)
+        sup.append(new_id)
     if t == 'p':
-        while (newId in prod):
-            newId = t + shortuuid.ShortUUID().random(length=9)
-        prod.append(newId)
+        while new_id in prod:
+            new_id = t + shortuuid.ShortUUID().random(length=9)
+        prod.append(new_id)
     if t == 'c':
-        while (newId in cust):
-            newId = t + shortuuid.ShortUUID().random(length=9)
-        cust.append(newId)
+        while new_id in cust:
+            new_id = t + shortuuid.ShortUUID().random(length=9)
+        cust.append(new_id)
     if t == 'o':
-        while (newId in ord):
-            newId = t + shortuuid.ShortUUID().random(length=9)
-        ord.append(newId)
-    return newId
+        while new_id in ords:
+            new_id = t + shortuuid.ShortUUID().random(length=9)
+        ords.append(new_id)
+    return new_id
 
 
+# Entry point of the application
 def main():
     customtkinter.set_appearance_mode("dark")
     customtkinter.set_default_color_theme("dark-blue")
     root = customtkinter.CTk()
-    app = loginWindow(root)
+    app = WelcomeWindow(root)
     root.mainloop()
 
+# Check script is run as main program
 if __name__ == '__main__':
     main()

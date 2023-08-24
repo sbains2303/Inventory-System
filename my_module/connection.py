@@ -14,9 +14,9 @@ def py_conn(choice,id):
     # pycursor = connection.cursor()
     name = sql_query('SELECT Name FROM Products WHERE ProductID=%s', id)
     if (choice == 0):
-        df = pd.read_sql_query(sql='SELECT Date,Sale WHERE ProductID=%(id)s',params={'id':name},con=connection)
+        df = pd.read_sql_query(sql="SELECT Date,Sale FROM Sales WHERE ProductID=%s",params=[row[0] for row in name],con=connection)
     else:
-        df = pd.read_sql_query(sql='SELECT Date,Purchase WHERE ProductID=%(id)s', params={'id': name}, con=connection)
+        df = pd.read_sql_query(sql='SELECT Date,Purchase FROM Purchases WHERE ProductID=%(id)s', params=[row[0] for row in name], con=connection)
     return df
 
 def sql_query(query, variables):
