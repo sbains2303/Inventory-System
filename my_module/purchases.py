@@ -44,13 +44,15 @@ class purchases_window:
 
         customtkinter.CTkLabel(self.master, text="Supplier Name: ").place(x=460, y=120)
         suppliers = sql_query('Select Name FROM Supplier',[])
-        self.suppo = customtkinter.CTkOptionMenu(self.master, values=suppliers, command=None)
+        sup = [row[0] for row in suppliers]
+        self.suppo = customtkinter.CTkOptionMenu(self.master, values=sup)
         self.suppo.place(x=610, y=120)
 
         customtkinter.CTkLabel(self.master, text="Product Name: ").place(x=460, y=160)
         products = sql_query('SELECT NAME FROM Products', [])
-        self.suppo = customtkinter.CTkOptionMenu(self.master, values=products, command=None)
-        self.suppo.place(x=610, y=160)
+        prod = [row[0] for row in products]
+        self.pro = customtkinter.CTkOptionMenu(self.master, values=prod)
+        self.pro.place(x=610, y=160)
 
         customtkinter.CTkLabel(self.master, text="Purchase: ").place(x=460, y=200)
         self.epurch = customtkinter.CTkEntry(self.master)
@@ -84,7 +86,7 @@ class purchases_window:
     def addPurchase(self):
         supplier = sql_query('SELECT SupplierID FROM Supplier WHERE Name=%s',[self.suppo.get()])
         supplier_list = [row[0] for row in supplier]
-        product = sql_query('SELECT ProductID FROM Products WHERE Name=%s',[self.suppo.get()])
+        product = sql_query('SELECT ProductID FROM Products WHERE Name=%s',[self.pro.get()])
         product_list = [row[0] for row in product]
         variables = []
         variables.append(main.id_gen('o'))
@@ -92,7 +94,7 @@ class purchases_window:
         last = [(self.epurch.get())]
         placeholdersone = ', '.join(['%s'] * len(supplier_list))
         placeholderstwo = ', '.join(['%s'] * len(product_list))
-        query =f"INSERT INTO Purchases VALUES (%s,%s,{placeholdersone},{placeholderstwo})"
+        query =f"INSERT INTO Purchases VALUES (%s,%s,{placeholdersone},{placeholderstwo},%s)"
         parameters = variables + supplier_list + product_list + last
         sql_query(query, parameters)
         self.fill_table()

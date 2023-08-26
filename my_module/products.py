@@ -4,19 +4,6 @@ import customtkinter
 from my_module import main
 from my_module.connection import sql_query
 import my_module
-import supplier
-
-def create_prod():
-    id = my_module.main.id_gen('p')
-    name = str(input("Enter product name: "))
-    my_module.main.check_name(name)
-    price = float(input("Enter the unit price: "))
-    sName = str("Enter supplier name: ")
-    supID = supplier.find_Sup(sName)
-
-    create_prod_query = """INSERT INTO Products(ProductID, Name, UnitPrice, SupplierID) VALUES (%s,%s,%d,%s)"""
-    sql_query(create_prod_query, [id,name,price,supID])
-
 
 class products_window:
 
@@ -64,7 +51,7 @@ class products_window:
         self.ldel = customtkinter.CTkLabel(self.master, text="Delete product from inventory:", font=('Helvetica', 14, 'bold'))
         self.ldel.place(x=360, y=200)
 
-        self.idl = customtkinter.CTkLabel(self.master, text="Product ID ", text_color="white")
+        self.idl = customtkinter.CTkLabel(self.master, text="Name ", text_color="white")
         self.idl.place(x=380, y=230)
         self.idt = customtkinter.CTkEntry(self.master)
         self.idt.place(x=460, y=230)
@@ -82,7 +69,7 @@ class products_window:
             query_variables.append(self.entp.get())
             query_variables.append(self.ido.get())
         else:
-            change_query = ('DELETE FROM Products WHERE ProductID=%s')
+            change_query = ('DELETE FROM Products WHERE Name=%s')
             query_variables.append(self.idt.get())
 
         sql_query(change_query, query_variables)
@@ -117,14 +104,13 @@ class products_window:
         self.price = customtkinter.CTkEntry(self.new)
         self.price.place(x=150, y=100)
 
-        self.newid = my_module.main.id_gen('p')
         self.suppliers = sql_query('SELECT Name FROM Supplier',[])
 
         self.optionl = customtkinter.CTkLabel(self.new, text="Supplier")
         self.optionl.place(x=60, y=140)
 
-
-        self.option = customtkinter.CTkOptionMenu(self.new, values=self.suppliers)
+        sup = [row[0] for row in self.suppliers]
+        self.option = customtkinter.CTkOptionMenu(self.new, values=sup)
         self.option.place(x=150, y =140)
 
         self.addb = customtkinter.CTkButton(self.new, text="Add product", command=lambda: addProduct())
@@ -139,7 +125,7 @@ class products_window:
         self.opt = customtkinter.CTkEntry(self.new)
         self.opt.place(x=150, y =270)
 
-        self.nsup = customtkinter.CTkButton(self.new, text="Add supplier and product")
+        self.nsup = customtkinter.CTkButton(self.new, text="Add supplier and product",command=lambda: addSup())
         self.nsup.place(x=60, y=310)
 
 
@@ -147,25 +133,35 @@ class products_window:
             result = sql_query('SELECT SupplierID FROM Supplier WHERE Name=%s',[self.option.get()])
             result_list = [row[0] for row in result]
             variables = []
+            self.newid = my_module.main.id_gen('p')
             variables.append(self.newid)
             variables.append(self.name.get())
-            variables.append(int(self.price.get()))
+            variables.append(self.price.get())
             placeholders = ', '.join(['%s'] * len(result_list))
             query =f"INSERT INTO Products VALUES (%s,%s,%s,{placeholders})"
             parameters = variables + result_list
             sql_query(query,parameters)
+            inv = [self.newid,0,0,0]
+            sql_query("INSERT INTO Inventory VALUES (%s,%s,%s,%s)",inv)
             self.fill_table()
 
         def addSup():
-            product = sql_query('SELECT ProductID FROM Products WHERE Name=%s', [self.suppo.get()])
-            product_list = [row[0] for row in product]
             variables = []
-            variables.append(main.id_gen('s'))
-            variables.append(self.dlbutton.get())
-            placeholder = ', '.join(['%s'] * len(product_list))
-            query = f"INSERT INTO Supplier VALUES (%s,%s,{placeholder})"
-            parameters = variables + product_list
-            sql_query(query, parameters)
+            self.newsuppid = my_module.main.id_gen('s')
+            self.newid = my_module.main.id_gen('p')
+            variables.append(self.newid)
+            variables.append(self.name.get())
+            variables.append(self.price.get())
+            variables.append(self.newsuppid)
+            sql_query("INSERT INTO Products VALUES (%s,%s,%s,%s)",variables)
+            variables2 = []
+            variables2.append(self.newsuppid.strip()[:10])
+            variables2.append(str(self.opt))
+            variables2.append(self.newid)
+            print(self.newsuppid)
+            sql_query("INSERT INTO Supplier VALUES (%s,%s,%s)",variables2)
+            inv = [self.newid,0,0,0]
+            sql_query("INSERT INTO Inventory VALUES (%s,%s,%s,%s)",inv)
             self.fill_table()
 
         self.new.mainloop()

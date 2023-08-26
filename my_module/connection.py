@@ -4,7 +4,7 @@ import pymysql
 import pandas as pd
 
 
-def py_conn(choice,id):
+def py_conn(choice, id):
     connection = pymysql.connect(
         host="localhost",
         user='root',
@@ -12,11 +12,10 @@ def py_conn(choice,id):
         database="inventory",
     )
     # pycursor = connection.cursor()
-    name = sql_query('SELECT Name FROM Products WHERE ProductID=%s', id)
     if (choice == 0):
-        df = pd.read_sql_query(sql="SELECT Date,Sale FROM Sales WHERE ProductID=%s",params=[row[0] for row in name],con=connection)
+        df = pd.read_sql_query(sql="SELECT Date,Sale FROM Sales WHERE ProductID=%s",params=[id],con=connection)
     else:
-        df = pd.read_sql_query(sql='SELECT Date,Purchase FROM Purchases WHERE ProductID=%(id)s', params=[row[0] for row in name], con=connection)
+        df = pd.read_sql_query(sql='SELECT Date,Purchase FROM Purchases WHERE ProductID=%s', params=[id], con=connection)
     return df
 
 def sql_query(query, variables):

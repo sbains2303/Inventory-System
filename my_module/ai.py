@@ -1,8 +1,6 @@
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn import svm
 from sklearn.model_selection import train_test_split
-from my_module.connection import py_conn
 
 
 class SmartInventoryManagementSystem:
@@ -32,7 +30,7 @@ class SmartInventoryManagementSystem:
         df['week_avg'] = self.four_week_avg(df['sales'].tolist())
 
         # Creates new df 'test' by selecting last 52 rows for testing
-        test = df.iloc[-52:]
+        self.test = df.iloc[-52:]
         # Modifies original df by excluding last 52 rows to create a training set
         df = df.iloc[:-52]
 
@@ -47,19 +45,7 @@ class SmartInventoryManagementSystem:
         # Uses trained SVR model to predict 'sales' values for test set 'X_test'
         predictions = clf.predict(X_test)
         # Uses trained model to predict 'sales' values for 'test' df (last 52 weeks)
-        predictions = clf.predict(test.drop('week_sale', axis = 1))
-
-        plt.figure(figsize = (10,6))
-        # 'test.index' represents the time axis
-        plt.plot(test.index, test['sales'], label = 'Actual Sales')
-        plt.plot(test.index, predictions, label = 'Predicted Sales', linestyle = 'dashed')
-        plt.xlabel('Time')
-        plt.ylabel('Sales')
-        plt.title('Actual vs Predicted Sales')
-        plt.legend()
-        plt.xticks(rotation = 45)
-        plt.tight_layout()
-        plt.show()
+        self.predictions = clf.predict(self.test.drop('week_sale', axis = 1))
 
     def four_week_avg(self,sales):
         sum = 0
@@ -81,15 +67,11 @@ class SmartInventoryManagementSystem:
 
     def optimize_inventory(self):
         sales_df, stock_df = self.integrate_data()
+        self.demand_forecasting(sales_df)
 
-        forecasted_demand = self.demand_forecasting(sales_df)
+    def getTest(self):
+        return self.test.index
 
+    def getPredictions(self):
+        return self.predictions
 
-def start_ai(id):
-    print(id)
-    # Example usage of the SmartInventoryManagementSystem class
-    sales_data = py_conn(0,id) # Replace with actual sales data file name
-    stock_data = py_conn(1,id)  # Replace with actual stock data file name
-
-    inventory_management_system = SmartInventoryManagementSystem(sales_data, stock_data)
-    inventory_management_system.optimize_inventory()

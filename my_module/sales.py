@@ -50,7 +50,8 @@ class SalesWindow:
 
         customtkinter.CTkLabel(self.master, text="Product Name:").place(x=460, y=120)
         products = sql_query('SELECT NAME FROM Products', [])
-        self.product_option_menu = customtkinter.CTkOptionMenu(self.master, values=products, command=None)
+        prod = [row[0] for row in products]
+        self.product_option_menu = customtkinter.CTkOptionMenu(self.master, values=prod)
         self.product_option_menu.place(x=610, y=120)
 
         customtkinter.CTkLabel(self.master, text="Sale:").place(x=460, y=160)
